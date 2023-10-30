@@ -22,10 +22,10 @@ def insertProduct(name, quantity):
 	con.commit()
 	con.close()
 
-def retrieveProduct(name):
+def retrieveProduct(name, quantity):
 	con = sql.connect("estoque.db")
 	cur = con.cursor()
-	cur.execute("SELECT name FROM products")
+	cur.execute("SELECT name, quantity FROM products")
 	products = cur.fetchall()
 	con.close()
 	return products

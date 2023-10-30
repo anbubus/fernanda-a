@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, request
 import func as dbHandler
-import models 
+import models
 from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
@@ -13,81 +13,85 @@ def index():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-	if request.method=='POST':
-		username = request.form['username'] #username recebe o nome vindo do form username
-		password = request.form['password']
-		dbHandler.retrieveUsers(username, password) #users recebe a funcao que recebe o nome e a senha como parametros
-		users = dbHandler.retrieveUsers()
-		if not users: #se users n existir
-			return render_template('login.html') 
+    if request.method=='POST':
+        username = request.form['username'] #username recebe o nome vindo do form username
+        password = request.form['password']
+        dbHandler.retrieveUsers(username, password) #users recebe a funcao que recebe o nome e a senha como parametros
+        users = dbHandler.retrieveUsers(username, password)
+        
+        if users: #se users n existir
+            for user in users:
+                if user[0]==username and user[1]==password:
+                  return redirect('/dashboard')
 		
-		elif users: #se users existir, renderiza o dashboard
-			return redirect('/dashboard')
-		
-	else:
-		request.method=='GET'
-		return render_template('login.html')
+        if not users: #se users existir, renderiza o dashboard
+            return render_template('login.html') 
+                		
+    else:
+        request.method=='GET'
+        return render_template('login.html')
 
 
 @app.route('/signup', methods= ['POST', 'GET'])
-def registro():
-		if request.method=='POST':
-			if(request.form['username']!='' and request.form['password']!=''): #se as áreas do form não forem vazias, username receber o input do form com nome username
-				username = request.form['username']
-				password = request.form['password']
-                                users = dbHandler.retrieveUsers(username, password)
-				
-				if users:
-					return print('Conta já existe')
-				
-				if not users:
-					dbHandler.insertUser(username, password)
-				
-				return redirect('/')
+def signup():
+    if request.method=='POST':
+        if(request.form['username']!='' and request.form['password']!=''): #se as áreas do form não forem vazias, username receber o input do form com nome username
+            username = request.form['username']
+            password = request.form['password']
+            users = dbHandler.retrieveUsers(username, password)		
+            
+            if users:
+                for user in users:
+                      if user[0]==username and user[1]==password:
+                            return redirect('/signup')
+                dbHandler.insertUser(username, password)
+                return redirect('/login') #render_template('/teste.html', users = users)
 			
-		elif request.method=='GET':
-			return render_template('signup.html')
+    #elif request.method=='GET':
+    return render_template('signup.html')
+
 		
 @app.route('/dashboard')
 def dashboard():
-    if request.method=='POST':
-        stock = {}  # Dicionário para armazenar o estoque da loja
+    if request.method=='POST': # and dbHandler.retrieveUsers(username, password):
+            global stock 
+            stock = []  # Dicionário para armazenar o estoque da loja
+            return render_template('dashboard.html')
+        
+
+    elif request.method=='GET': # and dbHandler.retrieveUsers(username, password):
         return render_template('dashboard.html')
+
+
+@app.route('/add')
+def add():
+    if request.method=='POST':
+        models.Product.adicionar_item()
+        stock.append(models.Product())
+        return redirect('/dashboard')
+    
+    elif request.method=='GET':
+        return render_template('add.html')
+
+
+@app.route('/edit')    
+def edit():
+    if request.method=='POST':
+        models.Product.editar_item()
+        stock.pop()
 
     elif request.method=='GET':
-        return render_template('dashboard.html')
+        return render_template('edit.html')
 
-def editar_item(name, quantity):
-    if(request.form[''] and stock.get(name)):
-        dbHandler.editProduct(quantity)
-        dashboard.stock[name] = quantity
-        return print("Quantidade atualizada com sucesso")
+@app.route('/delete')
+def delete():
+    if request.method=='POST':
+        models.Product.remover_estoque()
+        stock.remove(models.Product())
 
-    else: 
-        print('Produto não encontrado no estoque. Nome não existe')
+    elif request.method=='GET':
+        return render_template('delete.html')
 
-
-def remover_estoque(name):
-    if(request.form['name'] != '' and stock.get(name)):
-        dbHandler.removeProduct(name)
-        del stock[name, quantity]
-        return print("Produto removido com sucesso")
-
-    else:
-        return print("Produto não existe. Nome inválido")
-
-def adicionar_item(name, quantity):
-        if(request.form['name'] != ''):
-            name = request.form['name']
-
-            if dbHandler.products and stock.get(name):
-                return print("Produto inválido. Nome já existe!")
-
-            if not dbHandler.products:
-                dbHandler.insertProduct(name, quantity)
-                dashboard.stock[name] = quantity
-                print(f"{name} foi adicionado ao estoque com uma quantidade de {quantity}.")
-                return render_template(dashboard.html)
 
 app.run(debug=True)
 

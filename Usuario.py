@@ -1,9 +1,8 @@
 class Usuario():
-    def __init__(self, id, nome, email, senha):
+    def __init__(self, id, username, password):
         self.id = id
-        self.nome = nome
-        self.email = email
-        self.senha = senha
+        self.username = username
+        self.password = password
 
     def getId(self):
         return str(self.id)
@@ -11,22 +10,16 @@ class Usuario():
     def setId(self, id):
         self.id = id
 
-    def getNome(self):
-        return self.nome
+    def getusername(self):
+        return self.username
 
-    def setNome(self, nome):
-        self.nome = nome
+    def setusername(self, username):
+        self.username = username
 
-    def getEmail(self):
-        return self.email
+    def getpassword(self):
+        return self.password
 
-    def setEmail(self, email):
-        self.email = email
+    def setPassword(self, password):
+        self.password = password
 
-    def getSenha(self):
-        return self.senha
-
-    def setPassword(self, senha):
-        self.senha = senha
-
-usuario = Usuario(0, 'nome', 'email', 'senha', False)
+usuario = Usuario(0, 'username', 'password', False)
