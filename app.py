@@ -16,15 +16,14 @@ def login():
     if request.method=='POST':
         username = request.form['username'] #username recebe o nome vindo do form username
         password = request.form['password']
-        dbHandler.retrieveUsers(username, password) #users recebe a funcao que recebe o nome e a senha como parametros
-        users = dbHandler.retrieveUsers(username, password)
+        users = dbHandler.retrieveUsers()
         
-        if users: #se users n existir
+        if users:  #se users existir, renderiza o dashboard
             for user in users:
                 if user[0]==username and user[1]==password:
                   return redirect('/dashboard')
 		
-        if not users: #se users existir, renderiza o dashboard
+        if not users: #se users n existir
             return render_template('login.html') 
                 		
     else:
@@ -51,44 +50,39 @@ def signup():
     return render_template('signup.html')
 
 		
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
-    if request.method=='POST': # and dbHandler.retrieveUsers(username, password):
-            global stock 
-            stock = []  # Dicionário para armazenar o estoque da loja
-            return render_template('dashboard.html')
-        
-
-    elif request.method=='GET': # and dbHandler.retrieveUsers(username, password):
-        return render_template('dashboard.html')
+    stock = []
+    stock = dbHandler.retrieveProduct()
+    return render_template('dashboard.html', stock = stock)
 
 
-@app.route('/add')
+@app.route('/add', methods = ['POST', 'GET'])
 def add():
     if request.method=='POST':
         models.Product.adicionar_item()
-        stock.append(models.Product())
+        #stock.append(models.Product())
         return redirect('/dashboard')
     
     elif request.method=='GET':
         return render_template('add.html')
 
 
-@app.route('/edit')    
+@app.route('/edit', methods=['POST', 'GET'])    
 def edit():
     if request.method=='POST':
         models.Product.editar_item()
-        stock.pop()
+        return redirect('/dashboard')
 
-    elif request.method=='GET':
-        return render_template('edit.html')
+    
+    return render_template('edit.html')
 
-@app.route('/delete')
+@app.route('/delete', methods=['POST', 'GET'])
 def delete():
     if request.method=='POST':
         models.Product.remover_estoque()
-        stock.remove(models.Product())
-
+        #stock.remove(models.Product())
+        return redirect('/dashboard')
     elif request.method=='GET':
         return render_template('delete.html')
 

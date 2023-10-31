@@ -10,21 +10,19 @@ class Product:
 
     def editar_item():
         if(request.form['name'] != '' and request.form['quantity'] != ''):
-                quantity = request.form['quantity']
-                name = request.form['name']
-                for product in dbHandler.retrieveProduct(name):
-                    if product[0]==name:
-                        dbHandler.editProduct(quantity)
-                return print("Quantidade atualizada com sucesso")
-
-        else: 
-            print('Produto não encontrado no estoque. Nome não existe')
+            quantity = request.form['quantity']
+            name = request.form['name']
+            for product in dbHandler.retrieveProduct():
+                if product[0]==name:
+                    dbHandler.editProduct(quantity, name)
+                    return print("Quantidade atualizada com sucesso")
+        return print('Produto não encontrado no estoque. Nome não existe')
 
 
     def remover_estoque():
-        if(request.form['name'] != '' and request.form['quantity'] != ''):
+        if(request.form['name'] != ''):
             name = request.form['name']
-            for product in dbHandler.retrieveProduct(name):
+            for product in dbHandler.retrieveProduct():
                 if product[0]==name:
                     dbHandler.removeProduct(name)
                     return print("Produto removido com sucesso")
@@ -36,14 +34,14 @@ class Product:
         if(request.form['name'] != '' and request.form['quantity'] != ''):
             name = request.form['name']
             quantity = request.form['quantity']
-            products = dbHandler.retrieveProduct(name)
+            products = dbHandler.retrieveProduct()
 
             if products:
                 for product in products:
-                    if product[0]==name:
+                    if product[0]==name and product[1]==quantity:
                         return print("Produto inválido. Nome já existe!")
                     dbHandler.insertProduct(name, quantity)
-                    print(f"{{name}} foi adicionado ao estoque com uma quantidade de {{quantity}}.")
+                    print(f"{name} foi adicionado ao estoque com uma quantidade de {quantity}.")
                     return redirect('/dashboard')
                     
             
@@ -56,7 +54,7 @@ def signup():
         if(request.form['username']!='' and request.form['password']!=''): #se as áreas do form não forem vazias, username receber o input do form com nome username
             username = request.form['username']
             password = request.form['password']
-            users = dbHandler.retrieveUsers(username, password)		
+            users = dbHandler.retrieveUsers()		
             
             if users:
                 for user in users:

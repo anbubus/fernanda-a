@@ -30,24 +30,12 @@
         {% for product in stock: %}
           <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{ product.name }}
-              <span class="badge badge-dark badge-pill">{{ product.quantity }}</span>
+              {{ product[0] }}
+              <span class="badge badge-dark badge-pill">{{ product[1] }}</span>
             </li>
           </ul>
         {% endfor %}
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              i hate living
-              <span class="badge badge-primary badge-pill">10</span>
-            </li>
-          </ul>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              this fucking job is gonna kill me
-              <span class="badge badge-primary badge-pill">1</span>
-            </li>
-          </ul>
-          </div>
+        </div>
       </main>
     
       <footer>
